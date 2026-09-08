@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You, Sophia</title>
+    <!-- Fonts: Playfair Display for headings, Inter for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Cinematic Overlays -->
+    <div class="film-grain"></div>
+    <div class="light-leak"></div>
+
+    <!-- Digital Envelope Start -->
+    <div id="envelope-overlay" class="envelope-overlay">
+        <div class="envelope-content">
+            <h2 class="envelope-title">For You, Sophia</h2>
+            <button id="open-envelope" class="open-button">Open your letter</button>
+        </div>
+    </div>
+
+    <!-- Background Layers for Crossfading -->
+    <div id="bg-layer-1" class="background-layer"></div>
+    <div id="bg-layer-2" class="background-layer active"></div>
+    <div class="background-overlay"></div>
+
+    <!-- Post-Video Credits -->
+    <div id="credits-overlay" class="credits-overlay hidden">
+        <div class="credits-content">
+            <p class="credits-message">Mahal na mahal kita, Sophia.</p>
+            <p class="credits-subtext">Hinding-hindi ako magsasawang mahalin ka.</p>
+        </div>
+    </div>
+
+    <header class="minimal-header fade-in">
+        <div class="header-left">
+            <h1>For You, Sophia</h1>
+        </div>
+        <div class="header-right">
+            <p id="dynamic-label">A little something from me 🌻</p>
+        </div>
+    </header>
+
+    <main class="content-container">
+        <!-- Video Section -->
+        <section class="video-section fade-in-up">
+            <div class="video-wrapper" id="video-parent">
+                <video id="main-video" poster="assets/poster.jpg">
+                    <source src="assets/vid/abcd.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <!-- Custom Play Overlay -->
+                <div class="play-overlay" id="play-overlay">
+                    <div class="play-button">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
