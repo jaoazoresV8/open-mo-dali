@@ -50,10 +50,9 @@
         <!-- Video Section -->
         <section class="video-section fade-in-up">
             <div class="video-wrapper" id="video-parent">
-                <video id="main-video" poster="assets/poster.jpg">
-                    <source src="assets/vid/abcd.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                <!-- YouTube Iframe -->
+                <div id="player"></div>
+
                 <!-- Custom Play Overlay -->
                 <div class="play-overlay" id="play-overlay">
                     <div class="play-button">
@@ -62,10 +61,10 @@
                 </div>
             </div>
         </section>
-
-
     </main>
 
+    <!-- YouTube API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>
 </body>
 </html>

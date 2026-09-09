@@ -1,11 +1,9 @@
 /**
  * Sophia's Birthday Webpage - Logic
- * Handles cinematic background transitions based on video timeline.
+ * Handles cinematic background transitions based on YouTube video timeline.
  */
 
 // 1. CONFIGURATION: Background Timeline
-// Edit these values to match your video's song changes.
-// 'start' and 'end' are in seconds.
 const backgroundTimeline = [
     {
         start: 0,
@@ -45,17 +43,59 @@ const backgroundTimeline = [
     }
 ];
 
-// 2. STATE MANAGEMENT
-const video = document.getElementById('main-video');
+// 2. STATE MANAGEMENT & YOUTUBE API
+let player;
 const bgLayer1 = document.getElementById('bg-layer-1');
 const bgLayer2 = document.getElementById('bg-layer-2');
 const dynamicLabel = document.getElementById('dynamic-label');
 const envelopeOverlay = document.getElementById('envelope-overlay');
 const openEnvelopeBtn = document.getElementById('open-envelope');
 const creditsOverlay = document.getElementById('credits-overlay');
+const playOverlay = document.getElementById('play-overlay');
 
 let currentSectionIndex = -1;
 let activeLayer = bgLayer1;
+let timeCheckInterval;
+
+// Initialize YouTube Player
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        height: '100%',
+        width: '100%',
+        videoId: '_jWC7ljw3nc',
+        playerVars: {
+            'autoplay': 0,
+            'controls': 1,
+            'modestbranding': 1,
+            'rel': 0,
+            'showinfo': 0,
+            'iv_load_policy': 3,
+            'enablejsapi': 1,
+            'origin': location.protocol === 'file:' ? 'https://www.youtube.com' : location.origin
+        },
+        events: {
+            'onStateChange': onPlayerStateChange
+        }
+    });
+}
+
+function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.PLAYING) {
+        playOverlay.classList.add('hidden');
+        // Start polling for time updates
+        if (!timeCheckInterval) {
+            timeCheckInterval = setInterval(() => {
+                updateBackground(player.getCurrentTime());
+            }, 500);
+        }
+    } else if (event.data == YT.PlayerState.PAUSED) {
+        playOverlay.classList.remove('hidden');
+    } else if (event.data == YT.PlayerState.ENDED) {
+        creditsOverlay.classList.add('visible');
+        clearInterval(timeCheckInterval);
+        timeCheckInterval = null;
+    }
+}
 
 /**
  * Updates the background image and label based on the current video time.
@@ -92,25 +132,17 @@ function updateLabel(text) {
 function transitionToImage(imagePath) {
     const nextLayer = (activeLayer === bgLayer1) ? bgLayer2 : bgLayer1;
 
-    // Preload image before showing it
     const tempImg = new Image();
     tempImg.src = imagePath;
     tempImg.onload = () => {
-        // Set the background image on the hidden layer
         nextLayer.style.backgroundImage = `url('${imagePath}')`;
-
-        // Fade in the next layer, fade out the current active layer
         nextLayer.classList.add('active');
         activeLayer.classList.remove('active');
-
-        // Swap references
         activeLayer = nextLayer;
     };
 }
 
 // 3. EVENT LISTENERS
-
-const playOverlay = document.getElementById('play-overlay');
 
 // Handle Envelope Open
 openEnvelopeBtn.addEventListener('click', () => {
@@ -119,47 +151,18 @@ openEnvelopeBtn.addEventListener('click', () => {
 
 // Handle Play Overlay Click
 playOverlay.addEventListener('click', () => {
-    video.play();
+    player.playVideo();
     playOverlay.classList.add('hidden');
-    video.setAttribute('controls', 'true');
-});
-
-// Show Credits when video ends
-video.addEventListener('ended', () => {
-    creditsOverlay.classList.add('visible');
-    video.removeAttribute('controls');
-});
-
-// If the video is paused/ends, show overlay again
-video.addEventListener('pause', () => {
-    if (!video.ended) {
-        playOverlay.classList.remove('hidden');
-    }
-});
-
-video.addEventListener('play', () => {
-    playOverlay.classList.add('hidden');
-});
-
-// Listen for video time updates
-video.addEventListener('timeupdate', () => {
-    updateBackground(video.currentTime);
-});
-
-// Handle seeking (jump to specific time)
-video.addEventListener('seeking', () => {
-    updateBackground(video.currentTime);
 });
 
 // Initial background load
 window.addEventListener('load', () => {
-    // Set initial background immediately if video starts at 0
     if (backgroundTimeline.length > 0) {
         updateBackground(0);
     }
 });
 
-// Preload all background images to avoid delays during playback
+// Preload all background images
 function preloadAllImages() {
     backgroundTimeline.forEach(section => {
         const img = new Image();
